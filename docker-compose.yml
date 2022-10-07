@@ -1,0 +1,32 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    networks:
+      - arqui
+    volumes:
+      - ./sql/init.sql:/data/application/init.sql
+    command: --init-file /data/application/init.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+  jwt:
+    image: jwtarqui:1.0.0
+    ports:
+      - "8080:8080"
+    networks:
+      - arqui
+    environment:
+      - HOST=mysql
+      - PORT=3306
+      - USERNAME=root
+      - PASSWORD=root
+      - DB=seguridad
+      - SECRET=NyanCat
+      - EXPIRATION=300000
+    depends_on:
+      - mysql
+networks:
+  arqui:
